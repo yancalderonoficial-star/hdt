@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#172b4d">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Mis horas de trabajo</title>
+<style>
+:root{--navy:#172b4d;--blue:#315efb;--bg:#f4f6fb;--card:#fff;--muted:#64748b;--line:#e2e8f0;--green:#13845b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033}
+header{background:var(--navy);color:white;padding:26px 18px 42px} .wrap{max-width:980px;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:14px;letter-spacing:.08em;text-transform:uppercase;opacity:.8;font-weight:700}
+h1{font-size:clamp(25px,4vw,36px);margin:12px 0 6px}header p{margin:0;color:#d4def1}
+main{max-width:980px;margin:-22px auto 50px;padding:0 16px}
+.weekbar,.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 6px 22px #0f172a0a}
+.weekbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.weeknav{display:flex;align-items:center;gap:8px}.weeknav button{width:38px;height:38px;border:1px solid var(--line);background:white;border-radius:10px;font-size:20px;cursor:pointer}
+.week-label{font-weight:750}.week-sub{font-size:12px;color:var(--muted);margin-top:4px}
+button,input,select{font:inherit}button{cursor:pointer}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:700;background:var(--blue);color:#fff}.btn.secondary{background:#edf2ff;color:#2446c4}.btn.danger{background:#fff0ef;color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:clamp(22px,3vw,30px);font-weight:800;margin:8px 0 4px}.stat .hint{font-size:12px;color:var(--muted)}
+.progress{height:8px;background:#e9edf5;border-radius:99px;overflow:hidden;margin-top:12px}.progress span{display:block;height:100%;background:var(--green);width:0;transition:width .2s}
+.layout{display:grid;grid-template-columns:1.3fr .7fr;gap:16px}.card h2{font-size:18px;margin:0 0 6px}.sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+form .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:13px;font-weight:650;color:#334155}.field input,.field select{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;background:#fff;min-width:0}.field input:focus,.field select:focus{outline:2px solid #b8c7ff;border-color:var(--blue)}
+.field input.invalid{border-color:var(--red);background:#fff8f7}
+.time-help{font-size:11px;color:var(--muted);margin-top:-2px}
+.month-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:720px){.month-grid{grid-template-columns:1fr}}
+.field.full>.fields{margin-top:8px}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.full{grid-column:1/-1}
+.days{display:flex;flex-direction:column;gap:8px}.day{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}.day strong{display:block;font-size:14px}.day small{color:var(--muted)}.day-right{text-align:right;white-space:nowrap}.day-right b{display:block}.day-right button{border:0;background:transparent;color:var(--blue);font-size:12px;padding:5px 0 0}
+.targetbox{background:#f7f8ff;border:1px solid #dce4ff;border-radius:13px;padding:14px;margin-top:16px}.targetbox .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.targetbox p{font-size:12px;color:var(--muted);margin:0 0 10px}.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px}
+.empty{padding:22px;text-align:center;color:var(--muted);font-size:13px}
+.status{font-size:12px;font-weight:750;padding:5px 8px;border-radius:99px;background:#e8f7ef;color:var(--green);display:inline-block}.status.over{background:#fff1e8;color:#9a3412}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.weekbar{align-items:flex-start}.stat{padding:15px}.stat .value{font-size:27px}}
+@media(max-width:420px){form .fields{grid-template-columns:1fr}.full{grid-column:auto}.weekbar{padding:15px}.card{padding:16px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><div class="brand">Control personal</div><span aria-hidden="true">◷</span></div>
+  <h1>Mis horas de trabajo</h1><p>Tu semana, tus horas, bajo control.</p>
+</div></header>
+<main>
+  <section class="weekbar">
+    <div class="weeknav"><button id="prevWeek" aria-label="Semana anterior">‹</button><div><div class="week-label" id="weekTitle">Esta semana</div><div class="week-sub" id="weekRange"></div></div><button id="nextWeek" aria-label="Semana siguiente">›</button></div>
+    <button class="btn secondary" id="thisWeek">Volver a esta semana</button>
+  </section>
+  <section class="grid">
+    <div class="card stat"><div class="label">Horas trabajadas</div><div class="value" id="worked">0 h 00 min</div><div class="hint" id="daysDone">0 días registrados</div></div>
+    <div class="card stat"><div class="label">Objetivo semanal</div><div class="value" id="targetSummary">40 h 00 min</div><div class="progress"><span id="progressBar"></span></div><div class="hint" id="progressText">0 % completado</div></div>
+    <div class="card stat"><div class="label" id="balanceLabel">Horas pendientes</div><div class="value" id="balance">40 h 00 min</div><div class="hint" id="balanceHint">Para alcanzar tu objetivo</div></div>
+  </section>
+  <section class="card" style="margin-bottom:16px">
+    <div class="weekbar" style="padding:0;border:0;box-shadow:none;margin:0 0 14px">
+      <div><h2 style="margin:0 0 5px">Resumen mensual</h2><p class="sub" style="margin:0">Horas registradas en el mes del día seleccionado.</p></div>
+      <div class="weeknav"><button id="prevMonth" aria-label="Mes anterior">‹</button><div><div class="week-label" id="monthTitle">Este mes</div><div class="week-sub" id="monthRange"></div></div><button id="nextMonth" aria-label="Mes siguiente">›</button></div>
+    </div>
+    <div class="grid" style="margin-bottom:0">
+      <div class="card stat"><div class="label">Horas trabajadas este mes</div><div class="value" id="monthWorked">0 h 00 min</div><div class="hint" id="monthDays">0 días registrados</div></div>
+      <div class="card stat"><div class="label">Días con horas</div><div class="value" id="monthDayCount">0</div><div class="hint">Días con al menos un turno</div></div>
+      <div class="card stat"><div class="label">Horas extras este mes</div><div class="value" id="monthOvertime">0 h 00 min</div><div class="hint">Horas por encima de los objetivos semanales</div></div>
+    </div>
+  </section>
+  <section class="layout">
+    <div class="card">
+      <h2>Registro diario</h2><p class="sub">Añade o corrige las horas de cada día.</p>
+      <form id="entryForm">
+        <div class="fields">
+          <div class="field full"><label for="day">Día de trabajo</label><input id="day" type="date" required></div>
+          <div class="field full"><label>Turno 1</label><div class="fields"><div class="field"><label for="start1">Entrada</label><input id="start1" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="09:00" value="09:00" required><span class="time-help">Ej.: 09:00 o 25:30</span></div><div class="field"><label for="end1">Salida</label><input id="end1" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="17:00" value="17:00" required><span class="time-help">Ej.: 17:00 o 26:00</span></div></div></div>
+          <div class="field full"><label>Turno 2 (opcional)</label><div class="fields"><div class="field"><label for="start2">Entrada</label><input id="start2" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="14:00"><span class="time-help">Ej.: 14:00 o 25:30</span></div><div class="field"><label for="end2">Salida</label><input id="end2" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="18:00"><span class="time-help">Ej.: 18:00 o 28:00</span></div></div></div>
+        </div>
+        <div class="form-actions"><button class="btn" type="submit" id="saveEntry">Guardar registro</button><button class="btn secondary" type="button" id="clearForm">Limpiar</button></div>
+        <p class="note">Puedes introducir horas desde 00:00 hasta 30:00. Por ejemplo, escribe 26:00 para indicar las 02:00 de la madrugada del mismo turno, y el tiempo se sumará al día que hayas seleccionado. Si usas un segundo turno, introduce sus horas en los campos del turno 2.</p>
+      </form>
+      <div class="targetbox">
+        <h2>Objetivo de esta semana</h2><p>Introduce cualquier cantidad de horas y minutos, sin objetivos predefinidos. Solo se modifica esta semana.</p>
+        <div class="fields">
+          <div class="field"><label for="targetHours">Horas</label><input id="targetHours" type="number" min="0" step="1" value="40"></div>
+          <div class="field"><label for="targetMinutes">Minutos</label><select id="targetMinutes"><option value="0">00 minutos</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option></select></div>
+        </div>
+        <div class="form-actions"><button class="btn" type="button" id="saveTarget">Guardar objetivo</button></div>
+        <div class="note">El objetivo queda guardado para esta semana y no cambia los resultados de semanas anteriores.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Esta semana</h2><p class="sub">Resumen de los registros de lunes a domingo.</p>
+      <div id="dayList" class="days"></div>
+      <div class="form-actions"><button class="btn secondary" type="button" id="exportCsv">Exportar CSV</button></div>
+      <p class="note">Los datos se guardan en este navegador en este dispositivo. Usa la exportación CSV para conservar una copia.</p>
+    </div>
+  </section>
+</main>
+<footer>Primera versión · Tus registros permanecen en tu dispositivo</footer>
+<script>
+const STORE_KEY = "mis-horas-trabajo-v1";
+const $ = id => document.getElementById(id);
+const dayNames = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+let state = loadState();
+let selectedWeek = weekKey(new Date());
+let selectedMonth = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,"0")}`;
+let editingDate = null;
+
+function loadState(){
+  try {
+    const data = JSON.parse(localStorage.getItem(STORE_KEY)) || {weeks:{}, entries:{}};
+    data.weeks = data.weeks || {}; data.entries = data.entries || {};
+    // Migrate records from v1 (single shift, pause and note) to v2 (two shifts, no pause/note).
+    for (const [date, e] of Object.entries(data.entries)) {
+      if (e && !e.shifts) {
+        let end = e.end;
+        const [sh, sm] = (e.start || "09:00").split(":").map(Number);
+        const [eh, em] = (end || "17:00").split(":").map(Number);
+        if (eh * 60 + em <= sh * 60 + sm) end = `${String(eh + 24).padStart(2,"0")}:${String(em).padStart(2,"0")}`;
+        data.entries[date] = {shifts:[{start:e.start || "09:00", end:end || "17:00"}]};
+      }
+    }
+    return data;
+  } catch { return {weeks:{}, entries:{}}; }
+}
+function persist(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
+function parseDate(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d,12); }
+function monday(d){ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate(),12); const offset=(x.getDay()+6)%7; x.setDate(x.getDate()-offset); return x; }
+function weekKey(d){ return dateKey(monday(d)); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function fmtDate(d){ return d.toLocaleDateString("es-ES",{day:"numeric",month:"short"}); }
+function fmtDuration(mins){
+  mins=Math.max(0,Math.round(mins)); const h=Math.floor(mins/60), m=mins%60;
+  return `${h} h ${String(m).padStart(2,"0")} min`;
+}
+function weekDates(key){ const start=parseDate(key); return Array.from({length:7},(_,i)=>addDays(start,i)); }
+function getWeek(key){ if(!state.weeks[key]) state.weeks[key]={targetMinutes:2400}; return state.weeks[key]; }
+function parseExtendedTime(value){
+  if(!/^([0-9]{1,2}):(0[0-9]|[1-5][0-9])$/.test(value || "")) return null;
+  const [h,m] = value.split(":").map(Number);
+  if(h > 30 || (h === 30 && m > 0)) return null;
+  return h*60+m;
+}
+function duration(entry){
+  if(!entry) return 0;
+  const shifts = entry.shifts || (entry.start && entry.end ? [{start:entry.start,end:entry.end}] : []);
+  return shifts.reduce((sum, shift) => {
+    const start = parseExtendedTime(shift.start), end = parseExtendedTime(shift.end);
+    return sum + (start !== null && end !== null && end > start ? end-start : 0);
+  }, 0);
+}
+function getWeekEntries(key){ return weekDates(key).map(d=>({date:dateKey(d),entry:state.entries[dateKey(d)]})); }
+function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderMonth(){
+  const [year,month]=selectedMonth.split("-").map(Number);
+  const first=new Date(year,month-1,1,12), last=new Date(year,month,0,12);
+  const label=first.toLocaleDateString("es-ES",{month:"long",year:"numeric"});
+  $("monthTitle").textContent=label.charAt(0).toLocaleUpperCase("es-ES")+label.slice(1);
+  $("monthRange").textContent=`1–${last.getDate()} ${first.toLocaleDateString("es-ES",{month:"long"})}`;
+  let total=0, count=0, overtime=0;
+  const monthlyEntries = [];
+  for(let d=1;d<=last.getDate();d++){
+    const key=dateKey(new Date(year,month-1,d,12)), entry=state.entries[key];
+    const mins=duration(entry);
+    total+=mins;
+    if(mins>0)count++;
+    monthlyEntries.push({key, mins});
+  }
+  // For each week, compare the hours that fall inside this month with that
+  // week's configured target. If the week spans two months, allocate its
+  // overtime proportionally to the hours worked in this month.
+  const weekBuckets = {};
+  for(const item of monthlyEntries){
+    const wk = weekKey(parseDate(item.key));
+    if(!weekBuckets[wk]) weekBuckets[wk]={total:0, monthTotal:0};
+    weekBuckets[wk].total += item.mins;
+    weekBuckets[wk].monthTotal += item.mins;
+  }
+  for(const [wk, bucket] of Object.entries(weekBuckets)){
+    const target = Number(getWeek(wk).targetMinutes) || 0;
+    const weekTotal = getWeekEntries(wk).reduce((sum,x)=>sum+duration(x.entry),0);
+    const extra = Math.max(0, weekTotal-target);
+    if(extra>0 && weekTotal>0){
+      overtime += Math.round(extra * bucket.monthTotal / weekTotal);
+    }
+  }
+  $("monthWorked").textContent=fmtDuration(total);
+  $("monthDays").textContent=`${count} ${count===1?"día registrado":"días registrados"}`;
+  $("monthDayCount").textContent=String(count);
+  $("monthOvertime").textContent=fmtDuration(overtime);
+}
+function render(){
+  const dates=weekDates(selectedWeek), start=dates[0], end=dates[6], current=weekKey(new Date())===selectedWeek;
+  $("weekTitle").textContent=current?"Esta semana":`Semana del ${fmtDate(start)}`;
+  $("weekRange").textContent=`${fmtDate(start)} – ${fmtDate(end)} ${end.getFullYear()}`;
+  const week=getWeek(selectedWeek), entries=getWeekEntries(selectedWeek);
+  const total=entries.reduce((sum,x)=>sum+duration(x.entry),0), goal=Number(week.targetMinutes)||0, diff=goal-total;
+  $("worked").textContent=fmtDuration(total);
+  $("daysDone").textContent=`${entries.filter(x=>x.entry).length} de 7 días registrados`;
+  $("targetSummary").textContent=fmtDuration(goal);
+  const pct=goal>0?Math.min(100,total/goal*100):100;
+  $("progressBar").style.width=`${pct}%`; $("progressText").textContent=`${Math.round(goal>0?total/goal*100:(total>0?100:0))}% completado`;
+  $("balanceLabel").textContent=diff>0?"Horas pendientes":diff<0?"Horas extra":"Objetivo alcanzado";
+  $("balance").textContent=fmtDuration(Math.abs(diff));
+  $("balanceHint").textContent=diff>0?"Para alcanzar tu objetivo":diff<0?"Por encima del objetivo":"Has llegado a tu objetivo";
+  $("balance").style.color=diff<0?"var(--green)":"";
+  $("targetHours").value=Math.floor(goal/60); $("targetMinutes").value=String(goal%60);
+  $("dayList").innerHTML=entries.map(({date,entry})=>{
+    const d=parseDate(date), label=d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"short"});
+    if(!entry) return `<div class="day"><div><strong>${escapeHtml(label)}</strong><small>Sin registrar</small></div><div class="day-right"><b>—</b><button data-add="${date}">Añadir</button></div></div>`;
+    const shifts = entry.shifts || [{start:entry.start,end:entry.end}];
+    const shiftText = shifts.map((s,i)=>`Turno ${i+1}: ${escapeHtml(s.start)}–${escapeHtml(s.end)}`).join(" · ");
+    return `<div class="day"><div><strong>${escapeHtml(label)}</strong><small>${shiftText}</small></div><div class="day-right"><b>${fmtDuration(duration(entry))}</b><button data-edit="${date}">Editar</button> · <button data-delete="${date}">Borrar</button></div></div>`;
+  }).join("");
+  $("dayList").querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>editEntry(b.dataset.add,false));
+  $("dayList").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editEntry(b.dataset.edit,true));
+  $("dayList").querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteEntry(b.dataset.delete));
+  renderMonth();
+}
+function editEntry(date,existing){
+  $("day").value=date; selectedMonth=date.slice(0,7); editingDate=existing?date:null;
+  const e=state.entries[date];
+  const shifts = existing && e ? (e.shifts || [{start:e.start,end:e.end}]) : [];
+  $("start1").value=shifts[0]?.start || "09:00";
+  $("end1").value=shifts[0]?.end || "17:00";
+  $("start2").value=shifts[1]?.start || "";
+  $("end2").value=shifts[1]?.end || "";
+  $("saveEntry").textContent=existing?"Actualizar registro":"Guardar registro";
+  $("day").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function clearForm(){
+  $("entryForm").reset();$("day").value="";$("start1").value="09:00";$("end1").value="17:00";$("start2").value="";$("end2").value="";
+  editingDate=null;$("saveEntry").textContent="Guardar registro";
+}
+function deleteEntry(date){ if(confirm(`¿Borrar el registro del ${date}?`)){delete state.entries[date];persist();render();} }
+$("entryForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const date=$("day").value;
+  const raw=[[$("start1").value.trim(),$("end1").value.trim()],[$("start2").value.trim(),$("end2").value.trim()]];
+  const shifts=[];
+  for(let i=0;i<raw.length;i++){
+    let [start,end]=raw[i];
+    if(!start&&!end) continue;
+    if(!start||!end){alert(`Completa la entrada y la salida del turno ${i+1}, o deja ambos campos vacíos.`);return;}
+    const s=parseExtendedTime(start), t=parseExtendedTime(end);
+    if(s===null||t===null){alert("Usa el formato HH:MM y horas entre 00:00 y 30:00 (por ejemplo, 26:00).");return;}
+    if(t<=s){alert(`La salida del turno ${i+1} debe ser posterior a la entrada. Para salir después de medianoche, usa horas como 25:30 o 26:00.`);return;}
+    shifts.push({start,end});
+  }
+  if(!date){alert("Selecciona el día de trabajo.");return;}
+  if(shifts.length===0){alert("Introduce al menos un turno.");return;}
+  if(shifts.length===2 && parseExtendedTime(shifts[1].start)<parseExtendedTime(shifts[0].end)){
+    alert("El segundo turno debe empezar después de que termine el primero.");return;
+  }
+  state.entries[date]={shifts};
+  const key=weekKey(parseDate(date));getWeek(key);persist();selectedWeek=key;selectedMonth=date.slice(0,7);clearForm();render();
+});
+$("clearForm").onclick=clearForm;
+$("saveTarget").onclick=()=>{
+  const h=Number($("targetHours").value), m=Number($("targetMinutes").value);
+  if(!Number.isInteger(h)||h<0||!Number.isFinite(h)||h>1000000){alert("Introduce una cantidad de horas válida.");return;}
+  getWeek(selectedWeek).targetMinutes=h*60+m;persist();render();
+};
+$("prevWeek").onclick=()=>{selectedWeek=dateKey(addDays(parseDate(selectedWeek),-7));clearForm();render();};
+$("nextWeek").onclick=()=>{selectedWeek=dateKey(addDays(parseDate(selectedWeek),7));clearForm();render();};
+$("thisWeek").onclick=()=>{selectedWeek=weekKey(new Date());clearForm();render();};
+$("exportCsv").onclick=()=>{
+  const rows=[["Fecha","Entrada turno 1","Salida turno 1","Entrada turno 2","Salida turno 2","Horas trabajadas (min)","Objetivo semanal (min)"]];
+  getWeekEntries(selectedWeek).forEach(({date,entry})=>{
+    if(entry){const shifts=entry.shifts||[{start:entry.start,end:entry.end}];rows.push([date,shifts[0]?.start||"",shifts[0]?.end||"",shifts[1]?.start||"",shifts[1]?.end||"",duration(entry),getWeek(selectedWeek).targetMinutes]);}
+  });
+  rows.push(["","","","","","",getWeek(selectedWeek).targetMinutes]);
+  const csv=rows.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=`horas-${selectedWeek}.csv`;a.click();URL.revokeObjectURL(url);
+};
+function normalizeTimeInput(input, final=false){
+  let raw=input.value.trim();
+  input.classList.remove("invalid");
+  if(!raw){if(final && input.required) input.classList.add("invalid");return;}
+  // Accept 9, 09, 930, 0930, 9:3, 9:30, or 09:30 and normalize to HH:MM.
+  let hPart="",mPart="";
+  if(raw.includes(":")){
+    const parts=raw.split(":");
+    if(parts.length!==2){input.classList.add("invalid");return;}
+    hPart=parts[0];mPart=parts[1];
+  } else {
+    const digits=raw.replace(/\D/g,"");
+    if(!digits){input.classList.add("invalid");return;}
+    if(digits.length<=2){hPart=digits;mPart=final?"00":"";}
+    else if(digits.length===3){hPart=digits.slice(0,1);mPart=digits.slice(1);}
+    else if(digits.length===4){hPart=digits.slice(0,2);mPart=digits.slice(2);}
+    else {input.classList.add("invalid");return;}
+  }
+  if(!/^\d{1,2}$/.test(hPart) || (mPart!==""&&!/^\d{1,2}$/.test(mPart))){input.classList.add("invalid");return;}
+  if(mPart===""){return;}
+  let h=Number(hPart),m=Number(mPart);
+  if(m>59 || h>30 || (h===30&&m>0)){input.classList.add("invalid");return;}
+  input.value=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+}
+document.querySelectorAll(".time-input").forEach(input=>{
+  // Let the user freely edit or clear the field while typing.
+  // Normalize only when they leave the field, not on every keystroke.
+  input.addEventListener("input",()=>input.classList.remove("invalid"));
+  input.addEventListener("blur",()=>normalizeTimeInput(input,true));
+});
+$("prevMonth").onclick=()=>{
+  const [y,m]=selectedMonth.split("-").map(Number);const d=new Date(y,m-2,1,12);
+  selectedMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;renderMonth();
+};
+$("nextMonth").onclick=()=>{
+  const [y,m]=selectedMonth.split("-").map(Number);const d=new Date(y,m,1,12);
+  selectedMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;renderMonth();
+};
+$("day").addEventListener("change",()=>{if($("day").value){selectedMonth=$("day").value.slice(0,7);renderMonth();}});
+$("day").value="";
+getWeek(selectedWeek);persist();render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch((err) => console.warn("No se pudo activar el modo sin conexión:", err));
+  });
+}
+</script>
+
+</body>
+</html>

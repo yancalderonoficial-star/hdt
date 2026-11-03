@@ -1,0 +1,19 @@
+# Mis horas de trabajo — versión 1.2
+
+## Cómo usarla
+1. Descomprime el ZIP y abre `index.html` en un navegador moderno.
+2. Registra hasta dos turnos por día. No hay pausas ni notas.
+3. Puedes escribir horas en formatos flexibles: `9`, `09`, `930`, `0930`, `9:3` o `9:30`. Al salir del campo se normalizan, por ejemplo, a `09:00` o `09:30`.
+4. Para salidas después de medianoche, utiliza hora extendida: `26:00` equivale a las 02:00 del día siguiente, pero cuenta en el día seleccionado.
+5. El resumen mensual muestra el total de horas, los días registrados y la media por día con horas. Puedes cambiar de mes con las flechas.
+6. Exporta CSV para conservar una copia.
+
+## Datos
+Los registros y objetivos se guardan en el almacenamiento local del navegador en ese dispositivo. Esta versión no sincroniza entre dispositivos.
+
+VERSIÓN 1.6 — PREPARADA PARA INSTALAR EN ANDROID (PWA)
+- Incluye manifest.webmanifest, iconos propios y sw.js para permitir la instalación y el uso básico sin conexión una vez cargada.
+- Para que Android permita instalarla, primero debe publicarse en una dirección HTTPS, por ejemplo con GitHub Pages.
+- Después abre la URL en Google Chrome para Android > menú ⋮ > "Instalar aplicación" o "Añadir a pantalla de inicio".
+- Los registros siguen guardándose en el almacenamiento local del navegador/dispositivo. No se sincronizan automáticamente entre ordenador y móvil.
+- Antes de cambiar de dispositivo, exporta tus datos desde la aplicación si quieres conservar una copia.
