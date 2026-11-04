@@ -33,7 +33,7 @@ form .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px
 .days{display:flex;flex-direction:column;gap:8px}.day{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;justify-content:space-between;gap:10px;align-items:center}.day strong{display:block;font-size:14px}.day small{color:var(--muted)}.day-right{text-align:right;white-space:nowrap}.day-right b{display:block}.day-right button{border:0;background:transparent;color:var(--blue);font-size:12px;padding:5px 0 0}
 .targetbox{background:#f7f8ff;border:1px solid #dce4ff;border-radius:13px;padding:14px;margin-top:16px}.targetbox .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.targetbox p{font-size:12px;color:var(--muted);margin:0 0 10px}.note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px}
 .empty{padding:22px;text-align:center;color:var(--muted);font-size:13px}
-.tabs{display:flex;gap:8px;margin-bottom:14px;background:#e9edf5;padding:5px;border-radius:13px}.tab-button{flex:1;border:0;border-radius:9px;padding:12px 10px;background:transparent;color:#475569;font-weight:750}.tab-button[aria-selected="true"]{background:#fff;color:var(--navy);box-shadow:0 2px 8px #0f172a12}.tab-panel[hidden]{display:none!important}.month-compact{padding:12px!important;margin:12px 0 0!important}.month-compact .weekbar{padding:0!important;margin:0 0 8px!important}.month-compact .weekbar h2{font-size:14px!important}.month-compact .sub{font-size:11px!important}.month-compact .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.month-compact .stat{padding:9px}.month-compact .stat .label{font-size:10px}.month-compact .stat .value{font-size:16px;margin:4px 0 2px}.month-compact .stat .hint{font-size:10px}.day{cursor:pointer}.day:focus{outline:2px solid var(--blue);outline-offset:2px}.week-total{display:flex;justify-content:space-between;padding:12px 2px;font-weight:750;border-top:1px solid var(--line);margin-top:8px}
+.tabs{display:flex;gap:8px;margin-bottom:14px;background:#e9edf5;padding:5px;border-radius:13px}.tab-button{flex:1;border:0;border-radius:9px;padding:12px 10px;background:transparent;color:#475569;font-weight:750}.tab-button[aria-selected="true"]{background:#fff;color:var(--navy);box-shadow:0 2px 8px #0f172a12}.tab-panel[hidden]{display:none!important}.month-compact{padding:12px!important;margin:12px 0 0!important}.month-compact .weekbar{padding:0!important;margin:0 0 8px!important}.month-compact .weekbar h2{font-size:14px!important}.month-compact .sub{font-size:11px!important}.month-compact .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.month-compact .stat{padding:9px}.month-compact .stat .label{font-size:10px}.month-compact .stat .value{font-size:16px;margin:4px 0 2px}.month-compact .stat .hint{font-size:10px}.day{cursor:pointer}.day:focus{outline:2px solid var(--blue);outline-offset:2px}.week-total{display:flex;justify-content:space-between;padding:12px 2px;font-weight:750;border-top:1px solid var(--line);margin-top:8px}
 .status{font-size:12px;font-weight:750;padding:5px 8px;border-radius:99px;background:#e8f7ef;color:var(--green);display:inline-block}.status.over{background:#fff1e8;color:#9a3412}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
 @media(max-width:720px){.grid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.weekbar{align-items:flex-start}.stat{padding:15px}.stat .value{font-size:27px}}
@@ -45,7 +45,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
   <div class="top"><div class="brand">Control personal</div><span aria-hidden="true">◷</span></div>
   <h1>Mis horas de trabajo</h1><p>Tu semana, tus horas, bajo control.</p>
 </div></header>
-<main><div class="tabs" role="tablist" aria-label="Secciones de la aplicación"><button class="tab-button" id="tabDaily" role="tab" aria-selected="true" aria-controls="panelDaily">Registro diario</button><button class="tab-button" id="tabWeek" role="tab" aria-selected="false" aria-controls="panelWeek">Esta semana</button></div>
+<main><div class="tabs" role="tablist" aria-label="Secciones de la aplicación"><button class="tab-button" id="tabDaily" role="tab" aria-selected="true" aria-controls="panelDaily">Registro diario</button><button class="tab-button" id="tabWeek" role="tab" aria-selected="false" aria-controls="panelWeek">Esta semana</button><button class="tab-button" id="tabPeriod" role="tab" aria-selected="false" aria-controls="panelPeriod">Consultar periodo</button></div>
 <section id="panelDaily" class="tab-panel" role="tabpanel" aria-labelledby="tabDaily">
     <div class="card">
       <h2>Registro diario</h2><p class="sub">Añade o corrige las horas de cada día.</p>
@@ -55,7 +55,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
           <div class="field full"><label>Turno 1</label><div class="fields"><div class="field"><label for="start1">Entrada</label><input id="start1" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="09:00" value="09:00" required><span class="time-help">Ej.: 09:00 o 25:30</span></div><div class="field"><label for="end1">Salida</label><input id="end1" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="17:00" value="17:00" required><span class="time-help">Ej.: 17:00 o 26:00</span></div></div></div>
           <div class="field full"><label>Turno 2 (opcional)</label><div class="fields"><div class="field"><label for="start2">Entrada</label><input id="start2" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="14:00"><span class="time-help">Ej.: 14:00 o 25:30</span></div><div class="field"><label for="end2">Salida</label><input id="end2" class="time-input" type="text" inputmode="numeric" autocomplete="off" maxlength="5" pattern="(?:[0-9]|[12][0-9]|30):[0-5][0-9]" placeholder="18:00"><span class="time-help">Ej.: 18:00 o 28:00</span></div></div></div>
         </div>
-        <div class="form-actions"><button class="btn" type="submit" id="saveEntry">Guardar registro</button><button class="btn secondary" type="button" id="clearForm">Limpiar</button></div>
+        <div class="form-actions"><button class="btn" type="submit" id="saveEntry">Guardar registro</button><button class="btn secondary" type="button" id="clearForm">Limpiar</button><button class="btn danger" type="button" id="deleteEntryButton" hidden>Borrar registro</button></div>
         <p class="note">Puedes introducir horas desde 00:00 hasta 30:00. Por ejemplo, escribe 26:00 para indicar las 02:00 de la madrugada del mismo turno, y el tiempo se sumará al día que hayas seleccionado. Si usas un segundo turno, introduce sus horas en los campos del turno 2.</p>
       </form>
       <div class="targetbox">
@@ -85,15 +85,36 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
       <div class="week-total"><span>Total semanal</span><span id="weekTotal">0 h 00 min</span></div><div class="form-actions"><button class="btn secondary" type="button" id="exportCsv">Exportar CSV</button></div>
       <p class="note">Los datos se guardan en este navegador en este dispositivo. Usa la exportación CSV para conservar una copia.</p>
     </div>
-<div id="monthSlotWeek"></div></section></main>
+<div id="monthSlotWeek"></div></section>
+<section id="panelPeriod" class="tab-panel" role="tabpanel" aria-labelledby="tabPeriod" hidden>
+  <div class="card">
+    <h2>Consultar periodo</h2><p class="sub">Elige las fechas de inicio y fin. Se incluyen ambos días en el cálculo.</p>
+    <div class="fields">
+      <div class="field"><label for="periodStart">Fecha de inicio</label><input id="periodStart" type="date" required></div>
+      <div class="field"><label for="periodEnd">Fecha de fin</label><input id="periodEnd" type="date" required></div>
+    </div>
+    <div class="form-actions"><button class="btn" type="button" id="calculatePeriod">Calcular horas</button></div>
+    <div class="targetbox" aria-live="polite"><p>Horas trabajadas en el intervalo seleccionado</p><div class="value" id="periodWorked" style="font-size:clamp(26px,4vw,34px);font-weight:800">0 h 00 min</div></div>
+  </div>
+</section></main>
 <section id="monthlySummary" class="card month-compact">
     <div class="weekbar" style="padding:0;border:0;box-shadow:none;margin:0 0 14px">
       <div><h2 style="margin:0 0 5px">Resumen mensual</h2><p class="sub" style="margin:0">Horas registradas en el mes del día seleccionado.</p></div>
       <div class="weeknav"><button id="prevMonth" aria-label="Mes anterior">‹</button><div><div class="week-label" id="monthTitle">Este mes</div><div class="week-sub" id="monthRange"></div></div><button id="nextMonth" aria-label="Mes siguiente">›</button></div>
     </div>
+    <div class="targetbox" style="margin:0 0 12px">
+      <h2 style="font-size:15px;margin-bottom:6px">Objetivo de este mes</h2>
+      <p>Independiente del objetivo semanal. Puedes establecer una cantidad distinta para cada mes.</p>
+      <div class="fields">
+        <div class="field"><label for="monthTargetHours">Horas</label><input id="monthTargetHours" type="number" min="0" step="1" value="160"></div>
+        <div class="field"><label for="monthTargetMinutes">Minutos</label><select id="monthTargetMinutes"><option value="0">00 minutos</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option></select></div>
+      </div>
+      <div class="form-actions"><button class="btn" type="button" id="saveMonthTarget">Guardar objetivo mensual</button><span class="note" id="monthTargetStatus" style="margin-top:8px"></span></div>
+    </div>
     <div class="grid" style="margin-bottom:0">
       <div class="card stat"><div class="label">Horas trabajadas este mes</div><div class="value" id="monthWorked">0 h 00 min</div><div class="hint" id="monthDays">0 días registrados</div></div>
       <div class="card stat"><div class="label">Días con horas</div><div class="value" id="monthDayCount">0</div><div class="hint">Días con al menos un turno</div></div>
+      <div class="card stat"><div class="label">Horas pendientes este mes</div><div class="value" id="monthPending">—</div><div class="hint" id="monthPendingHint">Configura el objetivo mensual</div></div>
       <div class="card stat"><div class="label">Horas extras este mes</div><div class="value" id="monthOvertime">0 h 00 min</div><div class="hint">Horas por encima de los objetivos semanales</div></div>
     </div>
   </section>
@@ -109,18 +130,19 @@ let editingDate = null;
 
 
 function setTab(which){
-  const daily=which==="daily";
-  $("panelDaily").hidden=!daily; $("panelWeek").hidden=daily;
-  $("tabDaily").setAttribute("aria-selected",String(daily)); $("tabWeek").setAttribute("aria-selected",String(!daily));
-  const slot=$(daily?"monthSlotDaily":"monthSlotWeek"); slot.appendChild($("monthlySummary"));
+  const daily=which==="daily", week=which==="week", period=which==="period";
+  $("panelDaily").hidden=!daily; $("panelWeek").hidden=!week; $("panelPeriod").hidden=!period;
+  $("tabDaily").setAttribute("aria-selected",String(daily)); $("tabWeek").setAttribute("aria-selected",String(week)); $("tabPeriod").setAttribute("aria-selected",String(period));
+  if(!period){ const slot=$(daily?"monthSlotDaily":"monthSlotWeek"); slot.appendChild($("monthlySummary")); }
 }
 $("tabDaily").addEventListener("click",()=>setTab("daily"));
 $("tabWeek").addEventListener("click",()=>setTab("week"));
+$("tabPeriod").addEventListener("click",()=>setTab("period"));
 
 function loadState(){
   try {
     const data = JSON.parse(localStorage.getItem(STORE_KEY)) || {weeks:{}, entries:{}};
-    data.weeks = data.weeks || {}; data.entries = data.entries || {};
+    data.weeks = data.weeks || {}; data.entries = data.entries || {}; data.monthTargets = data.monthTargets || {};
     // Migrate records from v1 (single shift, pause and note) to v2 (two shifts, no pause/note).
     for (const [date, e] of Object.entries(data.entries)) {
       if (e && !e.shifts) {
@@ -132,7 +154,7 @@ function loadState(){
       }
     }
     return data;
-  } catch { return {weeks:{}, entries:{}}; }
+  } catch { return {weeks:{}, entries:{}, monthTargets:{}}; }
 }
 function persist(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
@@ -200,6 +222,18 @@ function renderMonth(){
   $("monthDays").textContent=`${count} ${count===1?"día registrado":"días registrados"}`;
   $("monthDayCount").textContent=String(count);
   $("monthOvertime").textContent=fmtDuration(overtime);
+  const hasTarget=Object.prototype.hasOwnProperty.call(state.monthTargets||{},selectedMonth);
+  const monthGoal=hasTarget?Math.max(0,Number(state.monthTargets[selectedMonth])||0):null;
+  if(hasTarget){
+    $("monthTargetHours").value=Math.floor(monthGoal/60); $("monthTargetMinutes").value=String(monthGoal%60);
+    $("monthPending").textContent=fmtDuration(Math.max(0,monthGoal-total));
+    $("monthPendingHint").textContent=total>monthGoal?"Objetivo mensual superado":"Restante para alcanzar el objetivo";
+    $("monthTargetStatus").textContent=`Objetivo guardado: ${fmtDuration(monthGoal)}`;
+  }else{
+    $("monthTargetHours").value="160"; $("monthTargetMinutes").value="0";
+    $("monthPending").textContent="—"; $("monthPendingHint").textContent="Configura el objetivo mensual";
+    $("monthTargetStatus").textContent="Aún no hay un objetivo guardado para este mes.";
+  }
 }
 function render(){
   const dates=weekDates(selectedWeek), start=dates[0], end=dates[6], current=weekKey(new Date())===selectedWeek;
@@ -219,17 +253,22 @@ function render(){
   $("targetHours").value=Math.floor(goal/60); $("targetMinutes").value=String(goal%60);
   $("dayList").innerHTML=entries.map(({date,entry})=>{
     const d=parseDate(date), label=d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"short"});
-    if(!entry) return `<div class="day"><div><strong>${escapeHtml(label)}</strong><small>Sin registrar</small></div><div class="day-right"><b>—</b><button data-add="${date}">Añadir</button></div></div>`;
+    if(!entry) return `<div class="day" data-open="${date}" tabindex="0" role="button" aria-label="Añadir registro del ${escapeHtml(label)}"><div><strong>${escapeHtml(label)}</strong><small>Sin registrar · toca para añadir</small></div><div class="day-right"><b>—</b><button type="button" data-add="${date}">Añadir</button></div></div>`;
     const shifts = entry.shifts || [{start:entry.start,end:entry.end}];
     const shiftText = shifts.map((s,i)=>`Turno ${i+1}: ${escapeHtml(s.start)}–${escapeHtml(s.end)}`).join(" · ");
-    return `<div class="day"><div><strong>${escapeHtml(label)}</strong><small>${shiftText}</small></div><div class="day-right"><b>${fmtDuration(duration(entry))}</b><button data-edit="${date}">Editar</button> · <button data-delete="${date}">Borrar</button></div></div>`;
+    return `<div class="day" data-open="${date}" tabindex="0" role="button" aria-label="Editar registro del ${escapeHtml(label)}"><div><strong>${escapeHtml(label)}</strong><small>${shiftText}</small></div><div class="day-right"><b>${fmtDuration(duration(entry))}</b><button type="button" data-edit="${date}">Editar</button></div></div>`;
   }).join("");
-  $("dayList").querySelectorAll("[data-open]").forEach(el=>{const open=()=>{const date=el.dataset.open;setTab("daily");editEntry(date,!!state.entries[date]);};el.onclick=open;el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}};});
+  $("dayList").querySelectorAll(".day").forEach(el=>{
+    const open=()=>{const date=el.dataset.open;setTab("daily");editEntry(date,!!state.entries[date]);};
+    el.addEventListener("click",e=>{if(e.target.closest("button"))return;open();});
+    el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){if(e.target===el){e.preventDefault();open();}}});
+  });
+  $("dayList").querySelectorAll("[data-edit],[data-add]").forEach(btn=>btn.addEventListener("click",e=>{e.stopPropagation();const date=btn.dataset.edit||btn.dataset.add;setTab("daily");editEntry(date,!!state.entries[date]);}));
   $("weekTotal").textContent=fmtDuration(total);
   renderMonth();
 }
 function editEntry(date,existing){
-  $("day").value=date; selectedMonth=date.slice(0,7); editingDate=existing?date:null;
+  $("day").value=date; selectedMonth=date.slice(0,7); editingDate=existing?date:null; renderMonth();
   const e=state.entries[date];
   const shifts = existing && e ? (e.shifts || [{start:e.start,end:e.end}]) : [];
   $("start1").value=shifts[0]?.start || "09:00";
@@ -237,13 +276,20 @@ function editEntry(date,existing){
   $("start2").value=shifts[1]?.start || "";
   $("end2").value=shifts[1]?.end || "";
   $("saveEntry").textContent=existing?"Actualizar registro":"Guardar registro";
+  $("deleteEntryButton").hidden=!(existing && e);
   $("day").scrollIntoView({behavior:"smooth",block:"center"});
 }
 function clearForm(){
   $("entryForm").reset();$("day").value="";$("start1").value="09:00";$("end1").value="17:00";$("start2").value="";$("end2").value="";
-  editingDate=null;$("saveEntry").textContent="Guardar registro";
+  editingDate=null;$("saveEntry").textContent="Guardar registro";$("deleteEntryButton").hidden=true;
 }
-function deleteEntry(date){ if(confirm(`¿Borrar el registro del ${date}?`)){delete state.entries[date];persist();render();} }
+function deleteEntry(date){
+  if(!date || !state.entries[date]) return;
+  if(confirm(`¿Borrar todos los turnos registrados del ${date}? Esta acción no se puede deshacer.`)){
+    delete state.entries[date];persist();selectedWeek=weekKey(parseDate(date));selectedMonth=date.slice(0,7);clearForm();render();
+  }
+}
+$("deleteEntryButton").addEventListener("click",()=>deleteEntry(editingDate));
 $("entryForm").addEventListener("submit",e=>{
   e.preventDefault();
   const date=$("day").value;
@@ -315,6 +361,22 @@ document.querySelectorAll(".time-input").forEach(input=>{
   input.addEventListener("input",()=>input.classList.remove("invalid"));
   input.addEventListener("blur",()=>normalizeTimeInput(input,true));
 });
+$("saveMonthTarget").onclick=()=>{
+  const h=Number($("monthTargetHours").value), m=Number($("monthTargetMinutes").value);
+  if(!Number.isInteger(h)||h<0||!Number.isFinite(h)||h>1000000){alert("Introduce un objetivo mensual válido.");return;}
+  state.monthTargets=state.monthTargets||{};state.monthTargets[selectedMonth]=h*60+m;persist();renderMonth();
+};
+function calculatePeriod(){
+  const start=$("periodStart").value,end=$("periodEnd").value;
+  if(!start||!end){alert("Selecciona la fecha de inicio y la fecha de fin.");return;}
+  if(start>end){alert("La fecha de inicio debe ser anterior o igual a la fecha de fin.");return;}
+  let total=0;
+  for(const [date,entry] of Object.entries(state.entries)) if(date>=start&&date<=end) total+=duration(entry);
+  $("periodWorked").textContent=fmtDuration(total);
+}
+$("calculatePeriod").addEventListener("click",calculatePeriod);
+$("periodStart").addEventListener("change",()=>{if($("periodStart").value&&$("periodEnd").value)calculatePeriod();});
+$("periodEnd").addEventListener("change",()=>{if($("periodStart").value&&$("periodEnd").value)calculatePeriod();});
 $("prevMonth").onclick=()=>{
   const [y,m]=selectedMonth.split("-").map(Number);const d=new Date(y,m-2,1,12);
   selectedMonth=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;renderMonth();
@@ -325,7 +387,10 @@ $("nextMonth").onclick=()=>{
 };
 $("day").addEventListener("change",()=>{if($("day").value){selectedMonth=$("day").value.slice(0,7);renderMonth();}});
 $("day").value="";
-getWeek(selectedWeek);persist();setTab("daily");render();
+const today=dateKey(new Date());
+const monthStart=`${today.slice(0,7)}-01`;
+$("periodStart").value=monthStart;$("periodEnd").value=today;
+getWeek(selectedWeek);persist();setTab("daily");render();calculatePeriod();
 </script>
 
 <script>

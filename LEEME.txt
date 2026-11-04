@@ -1,5 +1,15 @@
-MIS HORAS DE TRABAJO — PWA v1.7
+MIS HORAS DE TRABAJO — PWA v1.8
 
-Novedades: dos pestañas (Registro diario y Esta semana), resumen mensual compacto al final de ambas pestañas y lista semanal compacta; toca un día para consultar/editar.
+Novedades:
+- En «Esta semana», tocar cualquier día abre su edición; se mantiene el botón «Editar» y se elimina el botón «Borrar» de la lista.
+- El borrado está dentro de la edición del día y pide confirmación.
+- Objetivo mensual independiente y editable por mes; se muestran las horas pendientes mensuales junto al resumen mensual. Las horas extra siguen calculándose según los objetivos semanales.
+- Nueva pestaña «Consultar periodo» para sumar las horas trabajadas entre dos fechas, incluyendo ambos extremos.
 
-Para actualizar GitHub Pages, sube los archivos del ZIP reemplazando los anteriores y confirma el commit. Mantén index.html, manifest.webmanifest y sw.js en la raíz publicada, junto a la carpeta icons. No desinstales la app ni borres los datos del navegador: los registros se guardan localmente y deben conservarse. Haz una exportación CSV antes de actualizar como precaución.
+Actualización en GitHub Pages:
+1. Exporta primero una copia CSV desde la app como precaución.
+2. Descomprime este ZIP y sube el contenido de la carpeta horas_trabajo_app a la raíz publicada del repositorio, reemplazando los archivos anteriores.
+3. Confirma el commit y espera a que GitHub Pages publique los cambios.
+4. Abre la app instalada con conexión a internet y espera unos segundos a que se actualice. Si sigue apareciendo la versión anterior, cierra la app completamente y vuelve a abrirla. No desinstales la app ni borres los datos de Chrome.
+
+Los registros existentes usan la misma clave local de almacenamiento y no se borran al actualizar. Los objetivos mensuales nuevos se guardan por mes en este dispositivo.
