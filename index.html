@@ -115,7 +115,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
       <div class="card stat"><div class="label">Horas trabajadas este mes</div><div class="value" id="monthWorked">0 h 00 min</div><div class="hint" id="monthDays">0 días registrados</div></div>
       <div class="card stat"><div class="label">Días con horas</div><div class="value" id="monthDayCount">0</div><div class="hint">Días con al menos un turno</div></div>
       <div class="card stat"><div class="label">Horas pendientes este mes</div><div class="value" id="monthPending">—</div><div class="hint" id="monthPendingHint">Configura el objetivo mensual</div></div>
-      <div class="card stat"><div class="label">Horas extras este mes</div><div class="value" id="monthOvertime">0 h 00 min</div><div class="hint">Horas por encima de los objetivos semanales</div></div>
+      <div class="card stat"><div class="label">Horas extras este mes</div><div class="value" id="monthOvertime">0 h 00 min</div><div class="hint" id="monthOvertimeHint">Horas por encima del objetivo mensual</div></div>
     </div>
   </section>
 <footer>Mis horas de trabajo · Tus registros permanecen en tu dispositivo</footer>
@@ -191,45 +191,29 @@ function renderMonth(){
   const label=first.toLocaleDateString("es-ES",{month:"long",year:"numeric"});
   $("monthTitle").textContent=label.charAt(0).toLocaleUpperCase("es-ES")+label.slice(1);
   $("monthRange").textContent=`1–${last.getDate()} ${first.toLocaleDateString("es-ES",{month:"long"})}`;
-  let total=0, count=0, overtime=0;
-  const monthlyEntries = [];
+  let total=0, count=0;
   for(let d=1;d<=last.getDate();d++){
     const key=dateKey(new Date(year,month-1,d,12)), entry=state.entries[key];
     const mins=duration(entry);
     total+=mins;
     if(mins>0)count++;
-    monthlyEntries.push({key, mins});
-  }
-  // For each week, compare the hours that fall inside this month with that
-  // week's configured target. If the week spans two months, allocate its
-  // overtime proportionally to the hours worked in this month.
-  const weekBuckets = {};
-  for(const item of monthlyEntries){
-    const wk = weekKey(parseDate(item.key));
-    if(!weekBuckets[wk]) weekBuckets[wk]={total:0, monthTotal:0};
-    weekBuckets[wk].total += item.mins;
-    weekBuckets[wk].monthTotal += item.mins;
-  }
-  for(const [wk, bucket] of Object.entries(weekBuckets)){
-    const target = Number(getWeek(wk).targetMinutes) || 0;
-    const weekTotal = getWeekEntries(wk).reduce((sum,x)=>sum+duration(x.entry),0);
-    const extra = Math.max(0, weekTotal-target);
-    if(extra>0 && weekTotal>0){
-      overtime += Math.round(extra * bucket.monthTotal / weekTotal);
-    }
   }
   $("monthWorked").textContent=fmtDuration(total);
   $("monthDays").textContent=`${count} ${count===1?"día registrado":"días registrados"}`;
   $("monthDayCount").textContent=String(count);
-  $("monthOvertime").textContent=fmtDuration(overtime);
   const hasTarget=Object.prototype.hasOwnProperty.call(state.monthTargets||{},selectedMonth);
   const monthGoal=hasTarget?Math.max(0,Number(state.monthTargets[selectedMonth])||0):null;
   if(hasTarget){
+    const overtime=Math.max(0,total-monthGoal);
+    $("monthOvertime").textContent=fmtDuration(overtime);
+    $("monthOvertimeHint").textContent=overtime>0?"Objetivo mensual superado":"Aún no superas el objetivo mensual";
     $("monthTargetHours").value=Math.floor(monthGoal/60); $("monthTargetMinutes").value=String(monthGoal%60);
     $("monthPending").textContent=fmtDuration(Math.max(0,monthGoal-total));
     $("monthPendingHint").textContent=total>monthGoal?"Objetivo mensual superado":"Restante para alcanzar el objetivo";
     $("monthTargetStatus").textContent=`Objetivo guardado: ${fmtDuration(monthGoal)}`;
   }else{
+    $("monthOvertime").textContent="—";
+    $("monthOvertimeHint").textContent="Configura el objetivo mensual";
     $("monthTargetHours").value="160"; $("monthTargetMinutes").value="0";
     $("monthPending").textContent="—"; $("monthPendingHint").textContent="Configura el objetivo mensual";
     $("monthTargetStatus").textContent="Aún no hay un objetivo guardado para este mes.";
