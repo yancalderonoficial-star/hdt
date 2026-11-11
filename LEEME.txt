@@ -1,15 +1,19 @@
-MIS HORAS DE TRABAJO — PWA v1.8
+MIS HORAS DE TRABAJO — PWA v2.0
 
-Novedades:
-- En «Esta semana», tocar cualquier día abre su edición; se mantiene el botón «Editar» y se elimina el botón «Borrar» de la lista.
-- El borrado está dentro de la edición del día y pide confirmación.
-- Objetivo mensual independiente y editable por mes; se muestran las horas pendientes mensuales junto al resumen mensual. Las horas extra siguen calculándose según los objetivos semanales.
-- Nueva pestaña «Consultar periodo» para sumar las horas trabajadas entre dos fechas, incluyendo ambos extremos.
+Cambios de esta versión:
+- Las horas extra mensuales se calculan sumando las horas extra de cada semana que termina dentro del mes.
+- Cada semana va de lunes a domingo. Se compara el total de sus siete días con el objetivo semanal guardado para esa semana.
+- Si la semana supera su objetivo, toda la diferencia se asigna al mes en el que cae el domingo, incluido ese domingo. Si la semana cruza dos meses, sus horas extra no se reparten: van completas al mes de su domingo.
+- Se elimina el objetivo mensual editable y el cálculo de horas pendientes mensuales. El resumen mensual muestra horas trabajadas, días con horas y horas extra.
+- Se mantienen los registros, los objetivos semanales, la consulta por periodo y la clave de almacenamiento existente.
 
-Actualización en GitHub Pages:
+ACTUALIZACIÓN EN GITHUB PAGES
 1. Exporta primero una copia CSV desde la app como precaución.
 2. Descomprime este ZIP y sube el contenido de la carpeta horas_trabajo_app a la raíz publicada del repositorio, reemplazando los archivos anteriores.
 3. Confirma el commit y espera a que GitHub Pages publique los cambios.
 4. Abre la app instalada con conexión a internet y espera unos segundos a que se actualice. Si sigue apareciendo la versión anterior, cierra la app completamente y vuelve a abrirla. No desinstales la app ni borres los datos de Chrome.
 
-Los registros existentes usan la misma clave local de almacenamiento y no se borran al actualizar. Los objetivos mensuales nuevos se guardan por mes en este dispositivo.
+IMPORTANTE SOBRE LOS DATOS
+- La clave local sigue siendo "mis-horas-trabajo-v1", por lo que se conservan los registros y objetivos semanales guardados en este dispositivo.
+- Los antiguos objetivos mensuales quedan ignorados; no se utilizan en el nuevo cálculo.
+- Los datos guardados en este dispositivo no se sincronizan automáticamente con otros dispositivos.

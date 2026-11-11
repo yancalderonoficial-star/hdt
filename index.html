@@ -102,20 +102,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 28px}
       <div><h2 style="margin:0 0 5px">Resumen mensual</h2><p class="sub" style="margin:0">Horas registradas en el mes del día seleccionado.</p></div>
       <div class="weeknav"><button id="prevMonth" aria-label="Mes anterior">‹</button><div><div class="week-label" id="monthTitle">Este mes</div><div class="week-sub" id="monthRange"></div></div><button id="nextMonth" aria-label="Mes siguiente">›</button></div>
     </div>
-    <div class="targetbox" style="margin:0 0 12px">
-      <h2 style="font-size:15px;margin-bottom:6px">Objetivo de este mes</h2>
-      <p>Independiente del objetivo semanal. Puedes establecer una cantidad distinta para cada mes.</p>
-      <div class="fields">
-        <div class="field"><label for="monthTargetHours">Horas</label><input id="monthTargetHours" type="number" min="0" step="1" value="160"></div>
-        <div class="field"><label for="monthTargetMinutes">Minutos</label><select id="monthTargetMinutes"><option value="0">00 minutos</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option></select></div>
-      </div>
-      <div class="form-actions"><button class="btn" type="button" id="saveMonthTarget">Guardar objetivo mensual</button><span class="note" id="monthTargetStatus" style="margin-top:8px"></span></div>
-    </div>
     <div class="grid" style="margin-bottom:0">
-      <div class="card stat"><div class="label">Horas trabajadas este mes</div><div class="value" id="monthWorked">0 h 00 min</div><div class="hint" id="monthDays">0 días registrados</div></div>
+      <div class="card stat"><div class="label">Horas trabajadas este mes</div><div class="value" id="monthWorked">0 h 00 min</div><div class="hint">Total de horas registradas</div></div>
       <div class="card stat"><div class="label">Días con horas</div><div class="value" id="monthDayCount">0</div><div class="hint">Días con al menos un turno</div></div>
-      <div class="card stat"><div class="label">Horas pendientes este mes</div><div class="value" id="monthPending">—</div><div class="hint" id="monthPendingHint">Configura el objetivo mensual</div></div>
-      <div class="card stat"><div class="label">Horas extras este mes</div><div class="value" id="monthOvertime">0 h 00 min</div><div class="hint" id="monthOvertimeHint">Horas por encima del objetivo mensual</div></div>
+      <div class="card stat"><div class="label">Horas extra este mes</div><div class="value" id="monthOvertime">0 h 00 min</div><div class="hint" id="monthOvertimeHint">Según las semanas que terminan este mes</div></div>
     </div>
   </section>
 <footer>Mis horas de trabajo · Tus registros permanecen en tu dispositivo</footer>
@@ -191,6 +181,7 @@ function renderMonth(){
   const label=first.toLocaleDateString("es-ES",{month:"long",year:"numeric"});
   $("monthTitle").textContent=label.charAt(0).toLocaleUpperCase("es-ES")+label.slice(1);
   $("monthRange").textContent=`1–${last.getDate()} ${first.toLocaleDateString("es-ES",{month:"long"})}`;
+
   let total=0, count=0;
   for(let d=1;d<=last.getDate();d++){
     const key=dateKey(new Date(year,month-1,d,12)), entry=state.entries[key];
@@ -199,25 +190,21 @@ function renderMonth(){
     if(mins>0)count++;
   }
   $("monthWorked").textContent=fmtDuration(total);
-  $("monthDays").textContent=`${count} ${count===1?"día registrado":"días registrados"}`;
   $("monthDayCount").textContent=String(count);
-  const hasTarget=Object.prototype.hasOwnProperty.call(state.monthTargets||{},selectedMonth);
-  const monthGoal=hasTarget?Math.max(0,Number(state.monthTargets[selectedMonth])||0):null;
-  if(hasTarget){
-    const overtime=Math.max(0,total-monthGoal);
-    $("monthOvertime").textContent=fmtDuration(overtime);
-    $("monthOvertimeHint").textContent=overtime>0?"Objetivo mensual superado":"Aún no superas el objetivo mensual";
-    $("monthTargetHours").value=Math.floor(monthGoal/60); $("monthTargetMinutes").value=String(monthGoal%60);
-    $("monthPending").textContent=fmtDuration(Math.max(0,monthGoal-total));
-    $("monthPendingHint").textContent=total>monthGoal?"Objetivo mensual superado":"Restante para alcanzar el objetivo";
-    $("monthTargetStatus").textContent=`Objetivo guardado: ${fmtDuration(monthGoal)}`;
-  }else{
-    $("monthOvertime").textContent="—";
-    $("monthOvertimeHint").textContent="Configura el objetivo mensual";
-    $("monthTargetHours").value="160"; $("monthTargetMinutes").value="0";
-    $("monthPending").textContent="—"; $("monthPendingHint").textContent="Configura el objetivo mensual";
-    $("monthTargetStatus").textContent="Aún no hay un objetivo guardado para este mes.";
+
+  // Cada semana se atribuye íntegramente al mes de su domingo (lunes-domingo).
+  // El total semanal incluye todos sus días, aunque algunos caigan en el mes anterior.
+  let overtime=0;
+  for(let d=1;d<=last.getDate();d++){
+    const sunday=new Date(year,month-1,d,12);
+    if(sunday.getDay()!==0) continue;
+    const wk=weekKey(sunday);
+    const weeklyTotal=getWeekEntries(wk).reduce((sum,x)=>sum+duration(x.entry),0);
+    const weeklyGoal=Number((state.weeks[wk]||{}).targetMinutes ?? 2400)||0;
+    overtime+=Math.max(0,weeklyTotal-weeklyGoal);
   }
+  $("monthOvertime").textContent=fmtDuration(overtime);
+  $("monthOvertimeHint").textContent="Suma de horas extra de las semanas que terminan este mes";
 }
 function render(){
   const dates=weekDates(selectedWeek), start=dates[0], end=dates[6], current=weekKey(new Date())===selectedWeek;
@@ -345,11 +332,6 @@ document.querySelectorAll(".time-input").forEach(input=>{
   input.addEventListener("input",()=>input.classList.remove("invalid"));
   input.addEventListener("blur",()=>normalizeTimeInput(input,true));
 });
-$("saveMonthTarget").onclick=()=>{
-  const h=Number($("monthTargetHours").value), m=Number($("monthTargetMinutes").value);
-  if(!Number.isInteger(h)||h<0||!Number.isFinite(h)||h>1000000){alert("Introduce un objetivo mensual válido.");return;}
-  state.monthTargets=state.monthTargets||{};state.monthTargets[selectedMonth]=h*60+m;persist();renderMonth();
-};
 function calculatePeriod(){
   const start=$("periodStart").value,end=$("periodEnd").value;
   if(!start||!end){alert("Selecciona la fecha de inicio y la fecha de fin.");return;}
